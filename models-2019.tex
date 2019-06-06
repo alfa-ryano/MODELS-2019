@@ -160,28 +160,29 @@ This means that all changes applied to a model are recorded so that they can be 
 \end{figure}
 
 Let's say that Bob developed a simple BPMN2 model in Fig. \ref{fig:bpmn2}. In common practice, if the model is persisted in state-based format, 
-the persistence produces an XMI file (simplified) as in Lst. \ref{lst:bpmn2_xmi}. This type of persistence only preserves the eventual state of the model,  
+the persistence produces an XMI file (simplified) as in List. \ref{lst:bpmn2_xmi}. This type of persistence only preserves the eventual state of the model,  
 loosing the detailed information of changes executed by Bob to construct the model. In contrary, 
-if we record all the changes made by Bob and persist them into a CBP file, we might obtain a list of change events in Lst. \ref{lst:bpmn2_cbp}. 
+if we record all the changes made by Bob and persist them into a CBP file, we can obtain a list of change events in List. \ref{lst:bpmn2_cbp}.
+In this paper, the CBP file is pseudo-formatted to improve readability. In the real-world, the file is persisted in an XML-like format.
+Replaying these recorded changes will produce a model with the same eventual state as in Fig. \ref{fig:bpmn2} and List. \ref{lst:bpmn2_xmi}.
 
 \vspace{-15pt}
 \begin{lstlisting}[style=eol,numbersep=1pt,caption={A BPMN2 model in Fig. \ref{fig:bpmn2} persisted in simplified XMI.},label=lst:bpmn2_xmi]
 <process id="e1" name="Default Process">
- <startEvent id="e2" name="Start Event 1">
-   <outgoing>e15</outgoing>
+ <startEvent id="e2">
+   <outgoing>e6</outgoing>
  </startEvent>
- <endEvent id="e4" name="End Event 1">
-   <incoming>e16</incoming>
+ <endEvent id="e4">
+   <incoming>e7</incoming>
  </endEvent>
- <task id="e14" name="Task A">
-   <incoming>e15</incoming>
-   <outgoing>e16</outgoing>
+ <task id="e5" name="Task A">
+   <incoming>e6</incoming>
+   <outgoing>e7</outgoing>
  </task>
- <sequenceFlow id="e15" sourceRef="e2" targetRef="e14"/>
- <sequenceFlow id="e16" sourceRef="e14" targetRef="e4"/>
+ <sequenceFlow id="e6" sourceRef="e2" targetRef="e5"/>
+ <sequenceFlow id="e7" sourceRef="e5" targetRef="e4"/>
 </process>
 \end{lstlisting}
-
 
 From the list, we can know the sequence of changes made by Bob to construct the model. We can also identify that Bob made invalid changes 
 that connect SequenceFlow \texttt{e3} from EndEvent \texttt{e4} to StartEvent \texttt{e2}
@@ -222,41 +223,110 @@ set e5.name to "Task A"
 \end{lstlisting}
 
 While persisting all these changes is perceived too excessive as it requires more storage space \cite{DBLP:conf/models/YohannisRPK18}, 
-in some conditions, it is desirable especially when we want to perform model analytics (e.g., model evolution, patterns, etc.) \cite{DBLP:conf/models/YohannisKP17}. 
-Moreover, we also have studied that change-based persistence can also bring benefit to speed up model comparison \cite{yohannis2018efficient}.
+in some conditions, it is desirable especially when we want to perform model analytics, 
+such as understanding model evolution, identifying patterns, etc. \cite{DBLP:conf/models/YohannisKP17}. 
+Moreover, CBP can also bring benefit to speed up model comparison \cite{yohannis2018efficient}.
 
-
+Trying to understand changes executed by Bob in List. \ref{lst:bpmn2_cbp} may requires extra cognitive effort 
+as one who tries to comprehend it needs to build a mental model and emulate the changes in his/her mind.
+One solution to support users dealing with the cognitive effort is by providing an interactive visualisation tool.
+With the tool, they can use it to replay the model construction and observe what kind of changes have been made by Bob.
 
 \section{Visualising Model Construction}
 \label{sec:visualising_model_construction}
+We have built the CBP-Player, 
+a simple prototype\footnote{Project and demo can be found at \url{https://github.com/alfa-ryano/CBP-Player} and \url{https://alfa-ryano.github.io/visualization.html}},
+that visualise the construction of a model. The prototype can replay a CBP file in the form of animated graphical models.
+It is a JavaScript application and uses mxGraph diagramming library \cite{mxgraph2019mxgraph} for displaying the graphical models. 
 
-\subsection{Architecture}
-\label{sec:architecture}
+\subsection{Process}
+\label{sec:process}
+Fig. \ref{fig:process} shows the process of the CBP-Player in drawing a model. 
+The process consist of three phases: Loading, Building, and Drawing.  
+In the Loading phase, the CBP-Player loads a CBP file as change events in memory. 
+It also load a predifined metamodel of the model represented in the CBP file. 
+The metamodel defines the model that will be constructed by the Building phase.
 
 \begin{figure}[h]
-    \includegraphics[width=\linewidth]{architecture}
-    \caption{An architecture to visualise model construction using change-based persistence.}
-    \label{fig:architecture}
+    \includegraphics[width=\linewidth]{process}
+    \caption{The process to visualise model construction using change-based persistence.}
+    \label{fig:process}
 \end{figure}
 
-\subsection{Prototype}
-\label{sec:prototype}
+The CBP-Player plays the loaded change events one-by-one emulating the construction of the model in the CBP file.
+The model needs to be constructed since it is useful for calculating certain values 
+that are required in drawing its graphical representation.
+For example, the shifting of elements' indexes caused by the deletion of an element in a containment or 
+obtaining the type of a feature which is not available in the CBP file. 
 
-\begin{figure}[]
+When executing a change event, besides constructing the abstract model, 
+a graphical model is also constructed. We can have more than one model drawer. 
+In Fig. \ref{fig:process}, we have two drawings 
+which allows to view a model construction in two perspectives: Ecore and BPMN2.
+
+\subsection{Implementation}
+\label{sec:implementation}
+Fig. \ref{fig:class_diagram} depicts the simplified class diagram 
+of the implementation of the CBP-Player. The main class \texttt{CBP-Player} has methods \texttt{load},
+\texttt{play}, and \texttt{stop} to load and control the play of a CBP file.
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{class_diagram}
+    \caption{The simplified class diagram of the CBP-Player implementation.}
+    \label{fig:class_diagram}
+\end{figure}
+
+When initialising, the \texttt{CBPPlayer} registers all kinds of \texttt{ModelDrawer} that are going to be used. 
+In Fig. \ref{fig:class_diagram}, we use \texttt{EcoreDrawer} and \texttt{BPMN2Drawer} classes as examples for the model drawers. 
+Both classes are derived from \texttt{ModelDrawer} class. This \texttt{ModelDrawer} class consists of 
+different extension classes of the \texttt{ChangeEventDrawer} class. Each extension class determines
+what kind of drawing operations should be executed on the graphical model if an instance of \texttt{ChangeEvent} is executed.
+For example, when the play method of the \texttt{DeleteElementEventDrawer} class is executed,
+it removes an element from the graphical model. The instance of this class is should be registered to
+the its corresponding \texttt{ChangeEvent}, in this case, class \texttt{DeleteElementEvent}. 
+If the instance of this \texttt{ChangeEvent} plays, it also executes the the \texttt{draw} method of 
+the \texttt{ChangeEventDrawer} instances registered to it. Thus, if an element is deleted from an abstract model,
+the corresponding element is also deleted in its graphical model. 
+
+While executing the load method, a CBP file is loaded into memory as \texttt{changeEvents}, 
+a list of \texttt{ChangeEvent}, and corresponding \texttt{ChangeEventDrawer} is registered to each change event. 
+When \texttt{CBP-Player} plays this \texttt{changeEvents}, it iterates throughout the list and executes  
+the \texttt{play} method of each change event emulating the construction of a model. 
+After executing each \texttt{play} method, the \texttt{draw} method of 
+the corresponding, registered \texttt{ChangeEventDrawer} is also executed to draw the model's graphic.
+Classes \texttt{Resource}, \texttt{Element}, and \texttt{Feature} are used as internal data structures 
+for constructing the abstract model.
+
+\subsection{Application}
+\label{sec:application}
+To obtain the CBP file in List. \ref{lst:bpmn2_cbp}, firstly, we modify
+the Eclipse BPMN2 modeler project \cite{eclipse2019bpmn2}. We add \texttt{ChangeEventAdapter} \cite{epsilonlabs2019changeeventadapter}
+of the Epsilon CBP \cite{DBLP:conf/models/YohannisKP17}  to the \texttt{Bpmn2Resource}'s \texttt{eAdapters}
+in the Eclipse BPMN2 modeler. Therefore, the adapater can capture every change made to a model on top of the modeller.
+We create the model in Fig. \ref{fig:bpmn2} by following the course of changes in List. \ref{lst:bpmn2_cbp}.
+We then save the model producing XMI and CBP files representative to the ones 
+in Listings \ref{lst:bpmn2_xmi} and \ref{lst:bpmn2_cbp}. 
+ 
+We have built a simple application in which we employ the CBP-Player. 
+The application can visualise the construction of a BPMN2 model in two perspectives: Ecore and BPMN2. 
+To demonstrate the application, we feed it with the produced CBP file. 
+Fig. \ref{fig:prototype} shows a snapshot of the prototype at the time when edge \texttt{e3} 
+is about to be removed (List. \ref{lst:bpmn2_cbp}, line 13) while replaying the CBP file.
+
+\begin{figure}[h]
     \frame{\includegraphics[width=\linewidth]{prototype}}
     \caption{A simple application that visualise the construction of the model in Fig. \ref{fig:bpmn2} in two perspective:
         Ecore and BPMN2.}
     \label{fig:prototype}
 \end{figure}
 
-A simple application that visualises the construction of the model in Fig. \ref{fig:bpmn2} in two perspective,
-Ecore and BPMN2, at the moment when edge \texttt{e3} is about to be removed (Lst. \ref{lst:bpmn2_cbp}, line 15).
-
 \section{Evaluation}
 \label{sec:evaluation}
-We have not attempted performance evaluation for the work reported in this paper 
-as the current version of the prototype is not intentionally not optimised for performance.
-
+We have not performed any performance evaluation in this work 
+since performance is not the main goal of the current prototype.
+To evaluate correctness, we have employed unit tests that exercises the features 
+presented in this work. A more systematic evaluation is required in later iteration 
+to evaluate the performance, usefulness, and usability of the CBP-Player.
 
 \section{Related Work}
 \label{sec:related_work}
