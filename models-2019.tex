@@ -115,6 +115,15 @@
 \maketitle
 
 \begin{abstract}
+This paper extends our previous work on change-based model persistence, aiming at
+providing a tool that can visualise the construction of a model. The tool 
+takes a change-based persistence file as input and plays it 
+in the form of graphical model emulating the changes applied to 
+the model persisted in the file. 
+The tool can visualise the construction of a model, 
+perform multi-perspective visualisation, and
+is designed to be extensible to any types of visualisation 
+that aim to exploit information provided in change-based persistence.
 
 
 \end{abstract}
@@ -185,8 +194,8 @@ Replaying these recorded changes will produce a model with the same eventual sta
 \end{lstlisting}
 
 From the list, we can know the sequence of changes made by Bob to construct the model. We can also identify that Bob made invalid changes 
-that connect SequenceFlow \texttt{e3} from EndEvent \texttt{e4} to StartEvent \texttt{e2}
--- no SequenceFlow is allowed to come out from an EndEvent or enter a StartEvent -- which he deleted later in the following changes. 
+that connect SequenceFlow \texttt{e3} from EndEvent \texttt{e4} to StartEvent \texttt{e2} 
+(no SequenceFlow is allowed to come out from an EndEvent or enter a StartEvent) which he deleted later in the following changes. 
 Such phenomenon might not be identified if we persists the model in state-based format. 
 
 \vspace{-15pt}
@@ -333,6 +342,17 @@ to evaluate the performance, usefulness, and usability of the CBP-Player.
 
 \section{Conclusions and Future Work}
 \label{sec:conclusions_and_future_work}
+This paper has presented an extension to the work of change-based model persistence
+that aims at providing a tool, the CBP-Player, to visualise model construction. 
+The tool takes a CBP file as input and plays it in the form of graphical model
+emulating the changes applied to the persisted model. 
+The tool is designed to be extensible to any types of visualisation that aim
+to exploit the information contained in CBP. The tool itself is still underdeveloped. 
+Some features that are planned to be added are visualising model differencing
+and conflict detection and model metrics 
+(number of elements, features, etc.) throughout the evolution of a model.
+
+
 
 \section*{Acknowledgment}
 This work was partly supported by through a scholarship managed by \emph{Lembaga Pengelola Dana Pendidikan Indonesia} (Indonesia Endowment Fund for Education).
