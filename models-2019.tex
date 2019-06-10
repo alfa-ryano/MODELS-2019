@@ -123,7 +123,7 @@ the model persisted in the file.
 The tool can visualise the construction of a model, 
 perform multi-perspective visualisation, and
 is designed to be extensible to any types of visualisation 
-that aim to exploit information provided in change-based persistence.
+that aim to exploit the information provided in change-based persistence.
 
 
 \end{abstract}
@@ -136,24 +136,22 @@ visualization, change-based persistence, model evolution, BPMN2, model-driven en
 \label{sec:introduction}
 In the context of model-driven engineering, models that are under-construction or completely developed are commonly persisted 
 so that the construction of the models can be continued or the models can be reused for other purposes. 
-Generally, these models are persisted in state-based format that is persisting their snapshots at certain points of time. 
-This approach causes the models losing the details of their historical changes which are substantial resources when 
-we want to perform analytical study of model evolution. As an alternative, models can also be persisted in change-based format -- models are 
+Generally, these models are persisted in a state-based format that is persisting their snapshots at certain points of time. 
+This approach causes the models losing the details of their historical changes, which are substantial resources when 
+we want to perform an analytical study of model evolution. As an alternative, models can also be persisted in change-based format -- models are 
 persisted on their changes. This type of persistence preserves all changes applied to models.
 
-In this paper, we extends our previous work on change-based persistence (CBP) that complies to the MOF/EMF metamodelling architectures
+In this paper, we extend our previous work on change-based persistence (CBP) that complies to the MOF/EMF metamodelling architectures
 \cite{DBLP:conf/models/YohannisKP17,yohannis2018towards,DBLP:conf/models/YohannisRPK18,yohannis2018efficient}
 by showing that a change-based persistence file can also be used as a resource to visualise changes that have been applied to construct a model. 
 Our tool takes a CBP file of a model as an input and presents the persisted changes as an animated graphical model. 
 
 This paper is structured as follows. 
 Section \ref{sec:change-based_persistence} provides an overview of our previous work on change-based model persistence. 
-Section \ref{sec:visualising_model_construction} discusses our approach in using change-based persistence to visualise model construction. 
-Section \ref{sec:evaluation} presents the evaluation to our approach. 
+Section \ref{sec:visualising_model_construction} discusses our approach to using change-based persistence to visualise model construction. 
+Section \ref{sec:evaluation} presents the evaluation of our approach. 
 Section \ref{sec:related_work} provides an overview of related work, and
 Section \ref{sec:conclusions_and_future_work} concludes with a discussion on directions for future work.
-
-
 
 \section{Change-based Persistence}
 \label{sec:change-based_persistence}
@@ -170,14 +168,14 @@ This means that all changes applied to a model are recorded so that they can be 
 
 Let's say that Bob developed a simple BPMN2 model in Fig. \ref{fig:bpmn2}. In common practice, if the model is persisted in state-based format, 
 the persistence produces an XMI file (simplified) as in List. \ref{lst:bpmn2_xmi}. This type of persistence only preserves the eventual state of the model,  
-loosing the detailed information of changes executed by Bob to construct the model. In contrary, 
+losing the detailed information of changes executed by Bob to construct the model. In contrast, 
 if we record all the changes made by Bob and persist them into a CBP file, we can obtain a list of change events in List. \ref{lst:bpmn2_cbp}.
-In this paper, the CBP file is pseudo-formatted to improve readability. In the real-world, the file is persisted in an XML-like format.
+In this paper, the CBP file is pseudo-formatted to improve readability. In the real world, the file is persisted in an XML-like format.
 Replaying these recorded changes will produce a model with the same eventual state as in Fig. \ref{fig:bpmn2} and List. \ref{lst:bpmn2_xmi}.
 
 \vspace{-15pt}
 \begin{lstlisting}[style=eol,numbersep=1pt,caption={A BPMN2 model in Fig. \ref{fig:bpmn2} persisted in simplified XMI.},label=lst:bpmn2_xmi]
-<process id="e1" name="Default Process">
+<process id="e1" name="Process 1">
  <startEvent id="e2">
    <outgoing>e6</outgoing>
  </startEvent>
@@ -236,7 +234,7 @@ in some conditions, it is desirable especially when we want to perform model ana
 such as understanding model evolution, identifying patterns, etc. \cite{DBLP:conf/models/YohannisKP17}. 
 Moreover, CBP can also bring benefit to speed up model comparison \cite{yohannis2018efficient}.
 
-Trying to understand changes executed by Bob in List. \ref{lst:bpmn2_cbp} may requires extra cognitive effort 
+Trying to understand changes executed by Bob in List. \ref{lst:bpmn2_cbp} may require extra cognitive effort 
 as one who tries to comprehend it needs to build a mental model and emulate the changes in his/her mind.
 One solution to support users dealing with the cognitive effort is by providing an interactive visualisation tool.
 With the tool, they can use it to replay the model construction and observe what kind of changes have been made by Bob.
@@ -245,15 +243,15 @@ With the tool, they can use it to replay the model construction and observe what
 \label{sec:visualising_model_construction}
 We have built the CBP-Player, 
 a simple prototype\footnote{Project and demo can be found at \url{https://github.com/alfa-ryano/CBP-Player} and \url{https://alfa-ryano.github.io/visualization.html}},
-that visualise the construction of a model. The prototype can replay a CBP file in the form of animated graphical models.
-It is a JavaScript application and uses mxGraph diagramming library \cite{mxgraph2019mxgraph} for displaying the graphical models. 
+that visualises the construction of a model. The prototype can replay a CBP file in the form of animated graphical models.
+It is a JavaScript application and uses the mxGraph diagramming library \cite{mxgraph2019mxgraph} for displaying the graphical models. 
 
 \subsection{Process}
 \label{sec:process}
 Fig. \ref{fig:process} shows the process of the CBP-Player in drawing a model. 
-The process consist of three phases: Loading, Building, and Drawing.  
+The process consists of three phases: Loading, Building, and Drawing.  
 In the Loading phase, the CBP-Player loads a CBP file as change events in memory. 
-It also load a predifined metamodel of the model represented in the CBP file. 
+It also loads a predefined metamodel of the model represented in the CBP file. 
 The metamodel defines the model that will be constructed by the Building phase.
 
 \begin{figure}[h]
@@ -265,18 +263,18 @@ The metamodel defines the model that will be constructed by the Building phase.
 The CBP-Player plays the loaded change events one-by-one emulating the construction of the model in the CBP file.
 The model needs to be constructed since it is useful for calculating certain values 
 that are required in drawing its graphical representation.
-For example, the shifting of elements' indexes caused by the deletion of an element in a containment or 
+For example, the shifting of elements' indexes caused by the deletion of an element in a containing feature or 
 obtaining the type of a feature which is not available in the CBP file. 
 
 When executing a change event, besides constructing the abstract model, 
 a graphical model is also constructed. We can have more than one model drawer. 
 In Fig. \ref{fig:process}, we have two drawings 
-which allows to view a model construction in two perspectives: Ecore and BPMN2.
+which allow viewing a model construction in two perspectives: Ecore and BPMN2.
 
 \subsection{Implementation}
 \label{sec:implementation}
 Fig. \ref{fig:class_diagram} depicts the simplified class diagram 
-of the implementation of the CBP-Player. The main class \texttt{CBP-Player} has methods \texttt{load},
+of the implementation of the CBP-Player. The main class, \texttt{CBP-Player}, has methods \texttt{load},
 \texttt{play}, and \texttt{stop} to load and control the play of a CBP file.
 
 \begin{figure}[h]
@@ -291,9 +289,9 @@ Both classes are derived from \texttt{ModelDrawer} class. This \texttt{ModelDraw
 different extension classes of the \texttt{ChangeEventDrawer} class. Each extension class determines
 what kind of drawing operations should be executed on the graphical model if an instance of \texttt{ChangeEvent} is executed.
 For example, when the play method of the \texttt{DeleteElementEventDrawer} class is executed,
-it removes an element from the graphical model. The instance of this class is should be registered to
-the its corresponding \texttt{ChangeEvent}, in this case, class \texttt{DeleteElementEvent}. 
-If the instance of this \texttt{ChangeEvent} plays, it also executes the the \texttt{draw} method of 
+it removes an element from the graphical model. The instance of this class should be registered to
+its corresponding \texttt{ChangeEvent}, in this case, class \texttt{DeleteElementEvent}. 
+If the instance of this \texttt{ChangeEvent} plays, it also executes the \texttt{draw} method of 
 the \texttt{ChangeEventDrawer} instances registered to it. Thus, if an element is deleted from an abstract model,
 the corresponding element is also deleted in its graphical model. 
 
@@ -302,7 +300,7 @@ a list of \texttt{ChangeEvent}, and corresponding \texttt{ChangeEventDrawer} is 
 When \texttt{CBP-Player} plays this \texttt{changeEvents}, it iterates throughout the list and executes  
 the \texttt{play} method of each change event emulating the construction of a model. 
 After executing each \texttt{play} method, the \texttt{draw} method of 
-the corresponding, registered \texttt{ChangeEventDrawer} is also executed to draw the model's graphic.
+the corresponding registered \texttt{ChangeEventDrawer} is also executed to draw the model's graphic.
 Classes \texttt{Resource}, \texttt{Element}, and \texttt{Feature} are used as internal data structures 
 for constructing the abstract model.
 
@@ -311,7 +309,7 @@ for constructing the abstract model.
 To obtain the CBP file in List. \ref{lst:bpmn2_cbp}, firstly, we modify
 the Eclipse BPMN2 modeler project \cite{eclipse2019bpmn2}. We add \texttt{ChangeEventAdapter} \cite{epsilonlabs2019changeeventadapter}
 of the Epsilon CBP \cite{DBLP:conf/models/YohannisKP17}  to the \texttt{Bpmn2Resource}'s \texttt{eAdapters}
-in the Eclipse BPMN2 modeler. Therefore, the adapater can capture every change made to a model on top of the modeller.
+in the Eclipse BPMN2 modeler. Therefore, the adapter can capture every change made to a model on top of the modeller.
 We create the model in Fig. \ref{fig:bpmn2} by following the course of changes in List. \ref{lst:bpmn2_cbp}.
 We then save the model, producing XMI and CBP files representative to the ones 
 in Listings \ref{lst:bpmn2_xmi} and \ref{lst:bpmn2_cbp}. 
@@ -360,7 +358,7 @@ Figures \ref{fig:ecore_29} and \ref{fig:bpmn2_29} show the models after all chan
 \label{sec:evaluation}
 We have not performed any performance evaluation in this work 
 since performance is not the main goal of the current prototype.
-To evaluate correctness, we have employed unit tests that exercises the features 
+To evaluate correctness, we have employed unit tests that exercise the features 
 presented in this work. A more systematic evaluation is required in later iteration 
 to evaluate the performance, usefulness, and usability of the CBP-Player.
 
@@ -369,16 +367,16 @@ to evaluate the performance, usefulness, and usability of the CBP-Player.
 Some tools are available to visualise Ecore-based models. 
 EcoreTools \cite{eclipse2019ecoretools} is a tool to define metamodels graphically while other tools such as
 Eugenia \cite{Kolovos2017} and Sirius \cite{eclipse2019sirius} are used 
-to define visual concrete syntax of models.
+to define the visual concrete syntax of models.
 Nevertheless, these tools are not intended to visualise the evolution or changes of models. 
 Visualisation of model evolution has been studied in different domain-specific
 modelling languages, such as business process \cite{fritscher2014visualizing}
-and software \cite{Mattila:2016:SVT:2994310.2994327}. A work on visualising changes specific to Ecore-based models 
+and software \cite{Mattila:2016:SVT:2994310.2994327}. Work on visualising changes specific to Ecore-based models 
 was performed by Maier et al. \cite{maier2015recording}. 
-They used state-based approach to persist different versions of a model.
+They used a state-based approach to persist different versions of a model.
 Changes between versions were derived using EMF Compare \cite{eclipse2017compare}, 
 a model differencing tool and then presented 
-in timeline format with color-coding was used 
+in a timeline format with colour-coding was used 
 to identify changes between versions, e.g. a new element is coloured green
 while other old elements are coloured grey. In contrast, our approach
 exploits change-based persistence to obtain changes and visualise them in
@@ -390,7 +388,7 @@ the form of animation.
 \label{sec:conclusions_and_future_work}
 This paper has presented an extension to the work of change-based model persistence
 that aims at providing a tool, the CBP-Player, to visualise model construction. 
-The tool takes a CBP file as input and plays it in the form of graphical model
+The tool takes a CBP file as input and plays it in the form of a graphical model,
 emulating the changes applied to the persisted model. 
 The tool is designed to be extensible to any types of visualisation that aim
 to exploit the information contained in CBP. The tool itself is still underdeveloped. 
