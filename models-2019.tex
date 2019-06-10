@@ -98,7 +98,7 @@
 
 \begin{document}
 
-\title{Towards Visualising Changes of Model
+\title{Towards Visualising Changes of Models
 %    *\\
 %{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and should not be used}
 %\thanks{Identify applicable funding agency here. If none, delete this.}
@@ -313,21 +313,48 @@ the Eclipse BPMN2 modeler project \cite{eclipse2019bpmn2}. We add \texttt{Change
 of the Epsilon CBP \cite{DBLP:conf/models/YohannisKP17}  to the \texttt{Bpmn2Resource}'s \texttt{eAdapters}
 in the Eclipse BPMN2 modeler. Therefore, the adapater can capture every change made to a model on top of the modeller.
 We create the model in Fig. \ref{fig:bpmn2} by following the course of changes in List. \ref{lst:bpmn2_cbp}.
-We then save the model producing XMI and CBP files representative to the ones 
+We then save the model, producing XMI and CBP files representative to the ones 
 in Listings \ref{lst:bpmn2_xmi} and \ref{lst:bpmn2_cbp}. 
  
+\begin{figure}[ht]
+    \begin{subfigure}[t]{0.14\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{bpmn2_12}
+        \caption{BPMN2 model at line 12 in List. \ref{lst:bpmn2_cbp}}
+        \label{fig:bpmn2_12}
+    \end{subfigure}
+    \hfill
+     \begin{subfigure}[t]{0.35\linewidth}
+         \centering
+         \includegraphics[width=\linewidth]{bpmn2_32}
+         \caption{BPMN2 model at line 29 in List. \ref{lst:bpmn2_cbp}}
+         \label{fig:bpmn2_29}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ecore_12}
+        \caption{Ecore model at line 12 in List. \ref{lst:bpmn2_cbp}}
+        \label{fig:ecore_12}
+    \end{subfigure}
+    \\
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ecore_32}
+        \caption{Ecore model at line 29 in List. \ref{lst:bpmn2_cbp}}
+        \label{fig:ecore_29}
+    \end{subfigure}
+\caption{The graphical models produced by the prototype during the construction of the model in Fig. \ref{fig:bpmn2}.}
+\label{fig:prototype}
+\end{figure}
+
 We have built a simple application in which we employ the CBP-Player. 
 The application can visualise the construction of a BPMN2 model in two perspectives: Ecore and BPMN2. 
 To demonstrate the application, we feed it with the produced CBP file. 
-Fig. \ref{fig:prototype} shows a snapshot of the prototype at the time when edge \texttt{e3} 
-is about to be removed (List. \ref{lst:bpmn2_cbp}, line 13) while replaying the CBP file.
-
-\begin{figure}[h]
-    \frame{\includegraphics[width=\linewidth]{prototype}}
-    \caption{A simple application that visualise the construction of the model in Fig. \ref{fig:bpmn2} in two perspective:
-        Ecore and BPMN2.}
-    \label{fig:prototype}
-\end{figure}
+Fig. \ref{fig:prototype} shows the graphical models displayed by the prototype. 
+Figures \ref{fig:ecore_12} and \ref{fig:bpmn2_12} show the Ecore and BPMN2 models at the time when edge \texttt{e3} 
+is about to be removed (List. \ref{lst:bpmn2_cbp}, line 12), while 
+Figures \ref{fig:ecore_29} and \ref{fig:bpmn2_29} show the models after all changes have been applied.
 
 \section{Evaluation}
 \label{sec:evaluation}

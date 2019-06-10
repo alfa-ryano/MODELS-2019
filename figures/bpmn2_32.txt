@@ -1,0 +1,33 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="e2" value="e2" style="shape=ellipse;aspect=fixed;strokeWidth=1;" vertex="1" parent="1">
+      <mxGeometry x="415" y="20" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="e4" style="shape=ellipse;aspect=fixed;strokeWidth=4;" vertex="1" parent="1">
+      <mxGeometry x="415" y="140" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="Task A" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="385" y="80" width="90" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="e6" style="noEdgeStyle=1;" edge="1" parent="1" source="e2" target="e5">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="425" y="50"/>
+          <mxPoint x="425" y="54"/>
+          <mxPoint x="430" y="54"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e7" value="e7" style="noEdgeStyle=1;" edge="1" parent="1" source="e5" target="e4">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="430" y="110"/>
+          <mxPoint x="430" y="114"/>
+          <mxPoint x="430" y="114"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>
