@@ -31,8 +31,10 @@
 \usepackage{subcaption}
 \usepackage[linesnumbered,ruled]{algorithm2e}
 \usepackage{courier}
-\usepackage{hyperref}
-\hypersetup{colorlinks=true,allcolors=blue}
+%\usepackage{hyperref}
+%\hypersetup{colorlinks=false,allcolors=false,bookmarks=false}
+\usepackage{nohyperref}
+\usepackage{url}
 \usepackage{listings}
 \usepackage{float}
 \lstset{
@@ -287,6 +289,12 @@ of the implementation of the CBP-Player. The main class, \texttt{CBP-Player}, ha
     \label{fig:class_diagram}
 \end{figure}
 
+\begin{figure}
+  \includegraphics[width=\linewidth]{prototype}
+  \caption{The application of CBP-Player.}
+  \label{fig:implementation}
+\end{figure}
+
 \begin{figure*}
   \begin{subfigure}[t]{0.2\linewidth}
     \centering
@@ -344,25 +352,25 @@ for constructing the abstract model.
 \subsection{Application}
 \label{sec:application}
 To obtain the change-based model in Listing \ref{lst:bpmn2_cbp}, firstly, we had to modify
-the Eclipse BPMN2 Modeler \cite{eclipse2019bpmn2}. We add \texttt{ChangeEventAdapter} \cite{epsilonlabs2019changeeventadapter}
+the Eclipse BPMN2 Modeler \cite{eclipse2019bpmn2}. In particular, we added \texttt{ChangeEventAdapter} \cite{epsilonlabs2019changeeventadapter}
 of the EpsilonLabs CBP \cite{DBLP:conf/models/YohannisKP17}  to the \texttt{Bpmn2Resource}'s \texttt{eAdapters}
 in the Eclipse BPMN2 Modeler. The said adapter can capture every change made to a model through the modeller.
-We create the model in Figure \ref{fig:bpmn2} by following the course of changes in Listing \ref{lst:bpmn2_cbp}.
-We then save the model, producing XMI and CBP files such as those 
+We then created the model in Figure \ref{fig:bpmn2} by following the course of changes in Listing \ref{lst:bpmn2_cbp}, and saved the model, producing XMI and CBP files such as those 
 in Listings \ref{lst:bpmn2_xmi} and \ref{lst:bpmn2_cbp}. 
- 
-We have built a simple application in which we employ the CBP-Player. 
-The application can visualise the construction of a BPMN2 model in two perspectives: Ecore (in an object-diagram-like notation) and BPMN2. 
+
+
+We have built a simple application in which we employ the CBP-Player (Figure \ref{fig:implementation}). The application can visualise the construction of a BPMN2 model using two notations: an object-diagram-like notation, and the standard BPMN2 graphical syntax. 
 To demonstrate the application, we feed it with the produced CBP file.
-The application loads the change events in the CBP file into memory and replays them one-by-one. Every time a change event is replayed, the modification represented by the event is reflected in the graphical models displayed by the application. 
+The application loads the change events in the CBP file into memory and replays them one-by-one. Every time a change event is replayed, it is also reflected in the two diagrams. 
 
-The Ecore perspective, as displayed in Figure \ref{fig:ecore_12}, shows the state of the Ecore structure of a model. Elements and values are represented with rectangles, features are depicted in rounded rectangles, and containment/non-containment relationships are represented with solid/dashed directed edges. Solid directed edges also represent ownership between elements and their features. Numbers on the edges indicate the indexes of the elements in their containers. 
+In the object diagram perspective, as displayed in Figure \ref{fig:ecore_12}, 
+elements and values are represented with rectangles, features are depicted in rounded rectangles, and containment/non-containment relationships are represented with solid/dashed directed edges. Solid directed edges also represent ownership between elements and their features. Numbers on the edges indicate the indexes of the elements in their containers. 
 
-Figure \ref{fig:prototype} shows the graphical models displayed by the prototype. Figures \ref{fig:ecore_12} and \ref{fig:bpmn2_12} show the Ecore and BPMN2 models at the time when edge \texttt{e3} is about to be removed (Listing \ref{lst:bpmn2_cbp}, line 12). In Figure \ref{fig:ecore_12}, we can notice there is element \texttt{e1} with type \texttt{Process} contained by the resource at index 0. The element has a single-valued feature \texttt{name} with value ``Process 1''. Element \texttt{e1} also has a multi-valued feature \texttt{flowElements} that contains three other elements, \texttt{e2} with type \texttt{StartEvent}, \texttt{e3} with type \texttt{SequenceFlow}, and \texttt{e4} with type \texttt{EndEvent}, each at index 0, 1, and 3 respectively. Element \texttt{e3} has a feature \texttt{name} with value ``Sequence Flow 1''. This element is referenced by elements \texttt{e2}'s \texttt{incoming} and \texttt{e4}'s \texttt{outgoing} features.  
+Figure \ref{fig:prototype} shows the graphical models displayed by the prototype. Figures \ref{fig:ecore_12} and \ref{fig:bpmn2_12} show the object diagram and BPMN2 diagram at the time when edge \texttt{e3} is about to be removed (Listing \ref{lst:bpmn2_cbp}, line 12). In Figure \ref{fig:ecore_12}, we can notice there is element \texttt{e1} with type \texttt{Process} contained by the resource at index 0. The element has a single-valued feature \texttt{name} with value ``Process 1''. Element \texttt{e1} also has a multi-valued feature \texttt{flowElements} that contains three other elements, \texttt{e2} with type \texttt{StartEvent}, \texttt{e3} with type \texttt{SequenceFlow}, and \texttt{e4} with type \texttt{EndEvent}, each at index 0, 1, and 3 respectively. Element \texttt{e3} has a feature \texttt{name} with value ``Sequence Flow 1''. This element is referenced by elements \texttt{e2}'s \texttt{incoming} and \texttt{e4}'s \texttt{outgoing} features.  
 
-Figure \ref{fig:bpmn2_12} displays the model in BPMN2; the state of the model in the Ecore perspective is hidden from users. In the figure, we can notice a \texttt{SequenceFlow} with name ``Sequence Flow 1'' wrongly connects \texttt{EndEvent} \texttt{e2} to \texttt{StartEvent} \texttt{e1}. No \texttt{SequenceFlow} is allowed to leave an \texttt{EndEvent} or enter a \texttt{StartEvent}. Later, the \texttt{SequenceFlow} is removed from the model (Listing \ref{lst:bpmn2_cbp} lines 13-17).          
+Figure \ref{fig:bpmn2_12} displays the model in BPMN2; the state of the model in the object diagram perspective is hidden from users. In the figure, we can notice a \texttt{SequenceFlow} with name ``Sequence Flow 1'' wrongly connects \texttt{EndEvent} \texttt{e2} to \texttt{StartEvent} \texttt{e1}. No \texttt{SequenceFlow} is allowed to leave an \texttt{EndEvent} or enter a \texttt{StartEvent}. Later, the \texttt{SequenceFlow} is removed from the model (Listing \ref{lst:bpmn2_cbp} lines 13-17).          
 
-Figures \ref{fig:bpmn2_29} and \ref{fig:ecore_29} show the models after all changes have been applied. In Figure \ref{fig:bpmn2_29}, the model does not contain the \texttt{SequenceFlow} with name ``Sequence Flow 1'' anymore. It is replaced with a Task ``Task A'' and two \texttt{SequenceFlow} \texttt{e6} and \texttt{e7} in the correct direction. Figure \ref{fig:ecore_29} shows the same model but displayed in the Ecore perspective. 
+Figures \ref{fig:bpmn2_29} and \ref{fig:ecore_29} show the diagrams after all changes have been applied. In Figure \ref{fig:bpmn2_29}, the diagram does not contain the \texttt{SequenceFlow} with name ``Sequence Flow 1'' anymore. It is replaced with a Task ``Task A'' and two \texttt{SequenceFlow} \texttt{e6} and \texttt{e7} in the correct direction. Figure \ref{fig:ecore_29} shows the same model but displayed in the object diagram perspective. 
 
 \section{Related Work}
 \label{sec:related_work}
@@ -394,9 +402,7 @@ The tool is designed to be extensible to any types of visualisation that aim
 to exploit the information contained in CBP. The tool itself is still at a prototype state. 
 Some features that are planned to be added are visualising model differencing
 and conflict detection and model metrics 
-(number of elements, features, etc.) throughout the evolution of a model.
-
-We have not undertaken any performance evaluation in this work 
+(number of elements, features, etc.) throughout the evolution of a model. We have not undertaken any performance evaluation in this work 
 since performance is not the main goal of the current prototype.
 To evaluate correctness, we have employed unit tests that exercise the features 
 presented in this work. A systematic evaluation is required in later iterations 
@@ -404,7 +410,7 @@ to evaluate the performance, usefulness, and usability of the tool.
 
 
 \section*{Acknowledgment}
-This work was partly supported through a scholarship managed by \emph{Lembaga Pengelola Dana Pendidikan Indonesia} (Indonesia Endowment Fund for Education).
+This work was part supported by the European Commission via the CROSSMINER (project number 732223) and TYPHON (project number 780251) H2020 projects and through a scholarship managed by \emph{Lembaga Pengelola Dana Pendidikan Indonesia} (Indonesia Endowment Fund for Education).
 
 %\section*{References}
 \bibliographystyle{IEEETran}
